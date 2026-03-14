@@ -16,6 +16,7 @@ if (process.platform === "win32") {
     ytDlpBinary = path.join(__dirname, "../extensions/yt-dlp");
     console.log("Binary path:", ytDlpBinary);
     console.log("Binary exists:", fs.existsSync(ytDlpBinary));
+    console.log("__dirname is:", __dirname);
 }
 
 const ytDlpWrap = new YTDlpWrap(ytDlpBinary);
