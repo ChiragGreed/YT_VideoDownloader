@@ -1,0 +1,431 @@
+// GetDownload.scss — Full redesign
+// Cinematic dark aesthetic · glowing red accents · editorial typography
+
+@import url('https://fonts.googleapis.com/css2?family=Bebas+Neue&family=DM+Sans:wght@300;400;500;600&display=swap');
+
+// ─── Tokens ───────────────────────────────────────────────
+$red: #FF2D2D;
+$red-dim: #cc1e1e;
+$red-glow: rgba(255, 45, 45, 0.18);
+$bg: #080a0f;
+$surface: #0e1117;
+$surface-2: #161b25;
+$border: rgba(255, 255, 255, 0.07);
+$text: #f0f4ff;
+$muted: #6b7a99;
+$valid: #22c55e;
+
+// ─── Root wrapper ─────────────────────────────────────────
+.gd-root {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-family: 'DM Sans', sans-serif;
+  position: relative;
+  padding: 24px;
+  background: transparent;
+}
+
+// ─── Ambient blobs ────────────────────────────────────────
+.gd-blob {
+  position: absolute;
+  border-radius: 50%;
+  filter: blur(90px);
+  pointer-events: none;
+  opacity: 0.35;
+  animation: blobFloat 8s ease-in-out infinite alternate;
+
+  &--1 {
+    width: 480px;
+    height: 480px;
+    background: radial-gradient(circle, #FF2D2D 0%, transparent 70%);
+    top: -140px;
+    left: -160px;
+    animation-delay: 0s;
+  }
+
+  &--2 {
+    width: 380px;
+    height: 380px;
+    background: radial-gradient(circle, #1a00ff 0%, transparent 70%);
+    bottom: -120px;
+    right: -100px;
+    opacity: 0.15;
+    animation-delay: -4s;
+  }
+}
+
+@keyframes blobFloat {
+  from {
+    transform: translate(0, 0) scale(1);
+  }
+
+  to {
+    transform: translate(30px, 20px) scale(1.06);
+  }
+}
+
+// ─── Card ─────────────────────────────────────────────────
+.gd-card {
+  position: relative;
+  z-index: 1;
+  width: 100%;
+  max-width: 700px;
+  background: $surface;
+  border: 1px solid $border;
+  border-radius: 24px;
+  padding: 44px 40px 36px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  backdrop-filter: blur(24px);
+  box-shadow:
+    0 0 0 1px rgba(255, 255, 255, 0.04),
+    0 24px 64px rgba(0, 0, 0, 0.7),
+    inset 0 1px 0 rgba(255, 255, 255, 0.06);
+  animation: cardIn 0.6s cubic-bezier(0.16, 1, 0.3, 1) both;
+}
+
+@keyframes cardIn {
+  from {
+    opacity: 0;
+    transform: translateY(28px) scale(0.97);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+// ─── Badge ────────────────────────────────────────────────
+.gd-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  font-size: 11px;
+  font-weight: 500;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: $muted;
+  background: $surface-2;
+  border: 1px solid $border;
+  border-radius: 100px;
+  padding: 5px 13px;
+  margin-bottom: 28px;
+}
+
+.gd-badge__dot {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: $valid;
+  box-shadow: 0 0 6px $valid;
+  animation: pulse 2s infinite;
+}
+
+@keyframes pulse {
+
+  0%,
+  100% {
+    opacity: 1;
+    box-shadow: 0 0 6px $valid;
+  }
+
+  50% {
+    opacity: 0.5;
+    box-shadow: 0 0 12px $valid;
+  }
+}
+
+// ─── YouTube icon ─────────────────────────────────────────
+.gd-icon-wrap {
+  position: relative;
+  margin-bottom: 24px;
+}
+
+.gd-yt-icon {
+  width: 68px;
+  height: 48px;
+  filter: drop-shadow(0 0 18px rgba(255, 45, 45, 0.55));
+  animation: iconIn 0.7s 0.15s cubic-bezier(0.16, 1, 0.3, 1) both;
+}
+
+@keyframes iconIn {
+  from {
+    opacity: 0;
+    transform: scale(0.7) rotate(-8deg);
+  }
+
+  to {
+    opacity: 1;
+    transform: scale(1) rotate(0deg);
+  }
+}
+
+.gd-icon-ring {
+  position: absolute;
+  inset: -12px;
+  border-radius: 50%;
+  border: 1px solid rgba(255, 45, 45, 0.18);
+  animation: ringPulse 3s infinite;
+}
+
+@keyframes ringPulse {
+  0% {
+    transform: scale(0.85);
+    opacity: 0;
+  }
+
+  50% {
+    opacity: 1;
+  }
+
+  100% {
+    transform: scale(1.15);
+    opacity: 0;
+  }
+}
+
+// ─── Title ────────────────────────────────────────────────
+.gd-title {
+  font-family: 'Bebas Neue', sans-serif;
+  font-size: 56px;
+  line-height: 0.92;
+  letter-spacing: 0.02em;
+  color: $text;
+  margin-bottom: 12px;
+  animation: fadeUp 0.6s 0.2s both;
+
+  &__accent {
+    color: $red;
+    text-shadow: 0 0 40px rgba(255, 45, 45, 0.5);
+  }
+}
+
+.gd-sub {
+  font-size: 14px;
+  color: $muted;
+  font-weight: 400;
+  line-height: 1.5;
+  margin-bottom: 32px;
+  max-width: 300px;
+  animation: fadeUp 0.6s 0.28s both;
+}
+
+@keyframes fadeUp {
+  from {
+    opacity: 0;
+    transform: translateY(16px);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+// ─── Form ─────────────────────────────────────────────────
+.gd-form {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  animation: fadeUp 0.6s 0.35s both;
+}
+
+.gd-input-wrap {
+  position: relative;
+  display: flex;
+  align-items: center;
+  background: $surface-2;
+  border: 1px solid $border;
+  border-radius: 12px;
+  transition: border-color 0.2s, box-shadow 0.2s;
+
+  &--focused {
+    border-color: rgba(255, 45, 45, 0.45);
+    box-shadow: 0 0 0 3px rgba(255, 45, 45, 0.1);
+  }
+
+  &--valid {
+    border-color: rgba(34, 197, 94, 0.35);
+    box-shadow: 0 0 0 3px rgba(34, 197, 94, 0.08);
+  }
+}
+
+.gd-input-icon {
+  width: 18px;
+  height: 18px;
+  color: $muted;
+  margin-left: 16px;
+  flex-shrink: 0;
+  transition: color 0.2s;
+
+  .gd-input-wrap--focused & {
+    color: $red;
+  }
+}
+
+.gd-input {
+  flex: 1;
+  background: transparent;
+  border: none;
+  outline: none;
+  padding: 15px 12px;
+  font-size: 13.5px;
+  font-family: 'DM Sans', sans-serif;
+  color: $text;
+  caret-color: $red;
+
+  &::placeholder {
+    color: $muted;
+  }
+}
+
+.gd-clear-btn {
+  background: none;
+  border: none;
+  cursor: pointer;
+  padding: 0 14px;
+  color: $muted;
+  display: flex;
+  align-items: center;
+  transition: color 0.15s;
+  flex-shrink: 0;
+
+  svg {
+    width: 14px;
+    height: 14px;
+  }
+
+  &:hover {
+    color: $text;
+  }
+}
+
+// ─── Submit button ────────────────────────────────────────
+.gd-btn {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 9px;
+  background: $red;
+  color: #fff;
+  border: none;
+  border-radius: 12px;
+  padding: 15px;
+  font-size: 15px;
+  font-weight: 600;
+  font-family: 'DM Sans', sans-serif;
+  letter-spacing: 0.01em;
+  cursor: pointer;
+  position: relative;
+  overflow: hidden;
+  transition: background 0.2s, transform 0.15s, box-shadow 0.2s;
+  box-shadow: 0 4px 20px rgba(255, 45, 45, 0.35);
+
+  &::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(120deg, transparent 30%, rgba(255, 255, 255, 0.18) 50%, transparent 70%);
+    transform: translateX(-100%);
+    transition: transform 0.5s;
+  }
+
+  &:hover:not(:disabled) {
+    background: $red-dim;
+    transform: translateY(-1px);
+    box-shadow: 0 8px 28px rgba(255, 45, 45, 0.45);
+
+    &::after {
+      transform: translateX(100%);
+    }
+  }
+
+  &:active:not(:disabled) {
+    transform: translateY(0);
+  }
+
+  &:disabled {
+    opacity: 0.45;
+    cursor: not-allowed;
+    box-shadow: none;
+  }
+
+  &--loading {
+    pointer-events: none;
+  }
+}
+
+.gd-btn-icon {
+  width: 18px;
+  height: 18px;
+}
+
+.gd-spinner {
+  width: 16px;
+  height: 16px;
+  border: 2px solid rgba(255, 255, 255, 0.3);
+  border-top-color: #fff;
+  border-radius: 50%;
+  animation: spin 0.7s linear infinite;
+}
+
+@keyframes spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+// ─── Format chips ─────────────────────────────────────────
+.gd-formats {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  justify-content: center;
+  margin-top: 24px;
+  animation: fadeUp 0.6s 0.42s both;
+}
+
+.gd-format-chip {
+  font-size: 11.5px;
+  font-weight: 500;
+  color: $muted;
+  background: $surface-2;
+  border: 1px solid $border;
+  border-radius: 100px;
+  padding: 5px 13px;
+  letter-spacing: 0.03em;
+  transition: color 0.2s, border-color 0.2s;
+
+  &:hover {
+    color: $text;
+    border-color: rgba(255, 255, 255, 0.18);
+  }
+}
+
+// ─── Footer ───────────────────────────────────────────────
+.gd-footer {
+  margin-top: 20px;
+  font-size: 11px;
+  color: rgba($muted, 0.55);
+  letter-spacing: 0.03em;
+}
+
+// ─── Responsive ───────────────────────────────────────────
+@media (max-width: 520px) {
+  .gd-card {
+    padding: 36px 24px 28px;
+    border-radius: 20px;
+    max-width: 480px;
+  }
+
+  .gd-title {
+    font-size: 46px;
+  }
+}

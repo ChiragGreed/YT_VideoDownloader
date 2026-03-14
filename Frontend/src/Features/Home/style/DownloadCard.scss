@@ -1,0 +1,305 @@
+// DownloadCard.scss — matches GetDownload cinematic dark aesthetic
+// Bebas Neue + DM Sans · red accents · glassy surface
+
+@import url('https://fonts.googleapis.com/css2?family=Bebas+Neue&family=DM+Sans:wght@300;400;500;600&display=swap');
+
+$red: #FF2D2D;
+$red-dim: #cc1e1e;
+$bg: #080a0f;
+$surface: #0e1117;
+$surface-2: #161b25;
+$border: rgba(255, 255, 255, 0.07);
+$text: #f0f4ff;
+$muted: #6b7a99;
+
+// ─── Outer wrapper ────────────────────────────────────────
+.dc-wrap {
+    width: 100%;
+    display: flex;
+    justify-content: center;
+    padding: 0 24px 48px;
+    font-family: 'DM Sans', sans-serif;
+    animation: dcFadeUp 0.5s cubic-bezier(0.16, 1, 0.3, 1) both;
+}
+
+@keyframes dcFadeUp {
+    from {
+        opacity: 0;
+        transform: translateY(20px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+// ─── Card ─────────────────────────────────────────────────
+.dc-card {
+    display: flex;
+    gap: 0;
+    width: 100%;
+    max-width: 700px;
+    background: $surface;
+    border: 1px solid $border;
+    border-radius: 20px;
+    overflow: hidden;
+    box-shadow:
+        0 0 0 1px rgba(255, 255, 255, 0.04),
+        0 20px 56px rgba(0, 0, 0, 0.65),
+        inset 0 1px 0 rgba(255, 255, 255, 0.05);
+}
+
+// ─── Thumbnail ────────────────────────────────────────────
+.dc-thumb {
+    position: relative;
+    width: 260px;
+    flex-shrink: 0;
+    overflow: hidden;
+
+    img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+        display: block;
+        transition: transform 0.4s ease;
+    }
+
+    &:hover img {
+        transform: scale(1.04);
+    }
+}
+
+.dc-thumb__overlay {
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(to top,
+            rgba(8, 10, 15, 0.85) 0%,
+            transparent 50%);
+    pointer-events: none;
+}
+
+.dc-thumb__play {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    opacity: 0;
+    transition: opacity 0.2s;
+    pointer-events: none;
+
+    svg {
+        width: 48px;
+        height: 48px;
+    }
+
+    .dc-thumb:hover & {
+        opacity: 1;
+    }
+}
+
+.dc-duration {
+    position: absolute;
+    bottom: 10px;
+    right: 10px;
+    font-size: 11.5px;
+    font-weight: 600;
+    color: $text;
+    background: rgba(0, 0, 0, 0.72);
+    border-radius: 6px;
+    padding: 3px 8px;
+    letter-spacing: 0.04em;
+    backdrop-filter: blur(4px);
+}
+
+// ─── Info panel ───────────────────────────────────────────
+.dc-info {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    padding: 24px 26px;
+    min-width: 0; // prevent text overflow
+}
+
+.dc-info__top {
+    display: flex;
+    gap: 7px;
+    margin-bottom: 12px;
+}
+
+.dc-tag {
+    font-size: 10.5px;
+    font-weight: 600;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: $red;
+    background: rgba(255, 45, 45, 0.1);
+    border: 1px solid rgba(255, 45, 45, 0.2);
+    border-radius: 100px;
+    padding: 3px 10px;
+
+    &--dim {
+        color: $muted;
+        background: $surface-2;
+        border-color: $border;
+    }
+}
+
+.dc-title {
+    font-family: 'DM Sans', sans-serif;
+    font-size: 16px;
+    font-weight: 600;
+    color: $text;
+    line-height: 1.45;
+    margin-bottom: 14px;
+    // clamp to 3 lines
+    display: -webkit-box;
+    -webkit-line-clamp: 3;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+}
+
+// ─── Meta row ─────────────────────────────────────────────
+.dc-meta {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-bottom: 20px;
+}
+
+.dc-meta__item {
+    display: flex;
+    align-items: center;
+    gap: 5px;
+    font-size: 12.5px;
+    color: $muted;
+
+    svg {
+        width: 13px;
+        height: 13px;
+        flex-shrink: 0;
+    }
+}
+
+.dc-meta__dot {
+    width: 3px;
+    height: 3px;
+    border-radius: 50%;
+    background: $muted;
+    opacity: 0.4;
+}
+
+// ─── Download button ──────────────────────────────────────
+.dc-btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    background: $red;
+    color: #fff;
+    text-decoration: none;
+    border-radius: 10px;
+    padding: 13px 20px;
+    font-size: 14px;
+    font-weight: 600;
+    font-family: 'DM Sans', sans-serif;
+    cursor: pointer;
+    position: relative;
+    overflow: hidden;
+    transition: background 0.2s, transform 0.15s, box-shadow 0.2s;
+    box-shadow: 0 4px 18px rgba(255, 45, 45, 0.35);
+
+    &::after {
+        content: '';
+        position: absolute;
+        inset: 0;
+        background: linear-gradient(120deg, transparent 30%, rgba(255, 255, 255, 0.18) 50%, transparent 70%);
+        transform: translateX(-100%);
+        transition: transform 0.5s;
+    }
+
+    &:hover {
+        background: $red-dim;
+        transform: translateY(-1px);
+        box-shadow: 0 8px 24px rgba(255, 45, 45, 0.45);
+
+        &::after {
+            transform: translateX(100%);
+        }
+    }
+
+    &:active {
+        transform: translateY(0);
+    }
+}
+
+.dc-btn__icon {
+    width: 17px;
+    height: 17px;
+    flex-shrink: 0;
+}
+
+// ─── Loading state ────────────────────────────────────────
+.dc-loading {
+    width: 100%;
+    max-width: 700px;
+    margin: 0 auto 40px;
+    padding: 0 24px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 12px;
+    font-family: 'DM Sans', sans-serif;
+    animation: dcFadeUp 0.4s both;
+}
+
+.dc-loading__bar {
+    width: 100%;
+    height: 3px;
+    background: $surface-2;
+    border-radius: 100px;
+    overflow: hidden;
+}
+
+.dc-loading__fill {
+    height: 100%;
+    width: 40%;
+    background: $red;
+    border-radius: 100px;
+    box-shadow: 0 0 12px rgba(255, 45, 45, 0.6);
+    animation: loadingSlide 1.2s ease-in-out infinite;
+}
+
+@keyframes loadingSlide {
+    0% {
+        transform: translateX(-100%);
+    }
+
+    100% {
+        transform: translateX(300%);
+    }
+}
+
+.dc-loading__text {
+    font-size: 13px;
+    color: $muted;
+    letter-spacing: 0.02em;
+}
+
+// ─── Responsive ───────────────────────────────────────────
+@media (max-width: 560px) {
+    .dc-card {
+        flex-direction: column;
+        border-radius: 16px;
+    }
+
+    .dc-thumb {
+        width: 100%;
+        height: 200px;
+    }
+
+    .dc-info {
+        padding: 20px;
+    }
+}
