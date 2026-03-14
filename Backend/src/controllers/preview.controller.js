@@ -1,4 +1,13 @@
+import path from "path";
+import fs from "fs";
 import { ytDlpWrap } from "../services/yt_dlp_setup.js";
+import os from "os";
+
+// Write cookies to a temp file once
+const cookiesPath = path.join(os.tmpdir(), "yt-cookies.txt");
+if (process.env.YOUTUBE_COOKIES && !fs.existsSync(cookiesPath)) {
+    fs.writeFileSync(cookiesPath, process.env.YOUTUBE_COOKIES, "utf8");
+}
 
 const previewController = async (req, res) => {
 
@@ -10,7 +19,12 @@ const previewController = async (req, res) => {
 
     try {
 
-        const info = await ytDlpWrap.getVideoInfo(url);
+        // Add cookies if available
+        const extraArgs = fs.existsSync(cookiesPath)
+            ? ["--cookies", cookiesPath]
+            : [];
+
+        const info = await ytDlpWrap.getVideoInfo([url, ...extraArgs]);
 
         const formats = info.formats
             .filter(f => f.ext === "mp4" && f.vcodec !== "none")
@@ -29,10 +43,8 @@ const previewController = async (req, res) => {
         });
 
     } catch (err) {
-
         console.error(err);
         res.status(500).json({ message: "Preview failed" });
-
     }
 
 };
