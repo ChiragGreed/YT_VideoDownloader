@@ -1,6 +1,6 @@
 import path from "path";
 import fs from "fs";
-import { ytDlpWrap, ffmpegPath } from "../services/yt_dlp_setup.js";
+import { ytDlpWrap } from "../services/yt_dlp_setup.js";
 import { fileURLToPath } from "url";
 
 const __filename = fileURLToPath(import.meta.url);
@@ -19,9 +19,10 @@ const downloadController = async (req, res) => {
 
   ytDlpWrap.exec([
     url,
-    "-f", "bestvideo[ext=mp4]+bestaudio[ext=m4a]/best[ext=mp4]/best",
-    "--ffmpeg-location", ffmpegPath,
-    "-o", outputPath
+    "-f",
+    "bestvideo+bestaudio/best",
+    "-o",
+    outputPath
   ])
     .on("close", () => {
 
