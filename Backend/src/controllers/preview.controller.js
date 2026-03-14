@@ -1,3 +1,14 @@
+import path from "path";
+import fs from "fs";
+import { ytDlpWrap } from "../services/yt_dlp_setup.js";
+import os from "os";
+
+// Write cookies to a temp file once
+const cookiesPath = path.join(os.tmpdir(), "yt-cookies.txt");
+if (process.env.YOUTUBE_COOKIES && !fs.existsSync(cookiesPath)) {
+    fs.writeFileSync(cookiesPath, process.env.YOUTUBE_COOKIES, "utf8");
+}
+
 const previewController = async (req, res) => {
 
     const { url } = req.body;
@@ -43,3 +54,5 @@ const previewController = async (req, res) => {
     }
 
 };
+
+export default previewController;
