@@ -1,6 +1,7 @@
 import YTDlpWrapPackage from "yt-dlp-wrap";
 import path from "path";
 import { fileURLToPath } from "url";
+import fs from "fs";
 
 const YTDlpWrap = YTDlpWrapPackage.default || YTDlpWrapPackage;
 
@@ -12,8 +13,9 @@ let ytDlpBinary;
 if (process.platform === "win32") {
     ytDlpBinary = path.join(__dirname, "../extensions/yt-dlp.exe");
 } else {
-    // download linux binary automatically
-    ytDlpBinary = await YTDlpWrap.downloadFromGithub();
+    ytDlpBinary = path.join(__dirname, "../extensions/yt-dlp");
+    console.log("Binary path:", ytDlpBinary);
+    console.log("Binary exists:", fs.existsSync(ytDlpBinary));
 }
 
 const ytDlpWrap = new YTDlpWrap(ytDlpBinary);
