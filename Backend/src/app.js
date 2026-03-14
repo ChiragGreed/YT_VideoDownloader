@@ -14,7 +14,7 @@ app.use(express.static(path.join(__dirname, "../", "/public/dist")));
 
 app.use(express.json());
 app.use(cors({
-    origin: "http://localhost:5173",
+    origin: "https://yt-videodownloader-chfj.onrender.com",
     credentials: true
 }))
 
