@@ -1,18 +1,3 @@
-import path from "path";
-import fs from "fs";
-import { ytDlpWrap } from "../services/yt_dlp_setup.js";
-import { fileURLToPath } from "url";
-import os from "os";
-
-const __filename = fileURLToPath(import.meta.url);
-const __dirname = path.dirname(__filename);
-
-// Write cookies to a temp file once
-const cookiesPath = path.join(os.tmpdir(), "yt-cookies.txt");
-if (process.env.YOUTUBE_COOKIES && !fs.existsSync(cookiesPath)) {
-  fs.writeFileSync(cookiesPath, process.env.YOUTUBE_COOKIES, "utf8");
-}
-
 const downloadController = async (req, res) => {
 
   const { url } = req.body;
@@ -20,6 +5,8 @@ const downloadController = async (req, res) => {
   if (!url) {
     return res.status(400).json({ message: "Url not found" });
   }
+
+  console.log("Download requested for:", url);
 
   const tempFileName = `download-${Date.now()}.mp4`;
   const outputPath = path.join(__dirname, tempFileName);
@@ -31,26 +18,27 @@ const downloadController = async (req, res) => {
     "bestvideo+bestaudio/best",
     "-o",
     outputPath
-];
+  ];
 
-  // Add cookies if available
   if (fs.existsSync(cookiesPath)) {
     args.push("--cookies", cookiesPath);
+    console.log("Using cookies from:", cookiesPath);
   }
+
+  console.log("Starting download with args:", args);
 
   ytDlpWrap.exec(args)
     .on("close", () => {
+      console.log("Download complete, sending file:", outputPath);
       res.download(outputPath, "video.mp4", () => {
         fs.unlink(outputPath, () => { });
       });
     })
     .on("error", (err) => {
-      console.error(err);
+      console.error("Download error:", err);
       if (!res.headersSent) {
-        res.status(500).json({ message: "Download failed" });
+        res.status(500).json({ message: "Download failed", error: err.message });
       }
     });
 
 };
-
-export default downloadController;

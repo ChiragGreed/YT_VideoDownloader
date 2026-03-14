@@ -1,14 +1,3 @@
-import path from "path";
-import fs from "fs";
-import { ytDlpWrap } from "../services/yt_dlp_setup.js";
-import os from "os";
-
-// Write cookies to a temp file once
-const cookiesPath = path.join(os.tmpdir(), "yt-cookies.txt");
-if (process.env.YOUTUBE_COOKIES && !fs.existsSync(cookiesPath)) {
-    fs.writeFileSync(cookiesPath, process.env.YOUTUBE_COOKIES, "utf8");
-}
-
 const previewController = async (req, res) => {
 
     const { url } = req.body;
@@ -18,13 +7,17 @@ const previewController = async (req, res) => {
     }
 
     try {
+        console.log("Preview requested for:", url);
 
-        // Add cookies if available
-       const extraArgs = fs.existsSync(cookiesPath)
-    ? ["--cookies", cookiesPath, "--js-runtimes", "node"]
-    : ["--js-runtimes", "node"];
+        const extraArgs = fs.existsSync(cookiesPath)
+            ? ["--cookies", cookiesPath, "--js-runtimes", "node"]
+            : ["--js-runtimes", "node"];
+
+        console.log("Calling getVideoInfo with args:", extraArgs);
 
         const info = await ytDlpWrap.getVideoInfo([url, ...extraArgs]);
+
+        console.log("Got video info:", info.title);
 
         const formats = info.formats
             .filter(f => f.ext === "mp4" && f.vcodec !== "none")
@@ -33,6 +26,8 @@ const previewController = async (req, res) => {
                 quality: f.format_note,
                 resolution: f.resolution
             }));
+
+        console.log("Formats found:", formats.length);
 
         res.json({
             title: info.title,
@@ -43,10 +38,8 @@ const previewController = async (req, res) => {
         });
 
     } catch (err) {
-        console.error(err);
-        res.status(500).json({ message: "Preview failed" });
+        console.error("Preview error:", err);
+        res.status(500).json({ message: "Preview failed", error: err.message });
     }
 
 };
-
-export default previewController;
