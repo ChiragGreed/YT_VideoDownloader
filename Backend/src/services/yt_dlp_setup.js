@@ -2,7 +2,10 @@ import YTDlpWrapPackage from "yt-dlp-wrap";
 import path from "path";
 import { fileURLToPath } from "url";
 import fs from "fs";
+import { exec } from "child_process";
+import { promisify } from "util";
 
+const execAsync = promisify(exec);
 const YTDlpWrap = YTDlpWrapPackage.default || YTDlpWrapPackage;
 
 const __filename = fileURLToPath(import.meta.url);
@@ -14,9 +17,15 @@ if (process.platform === "win32") {
     ytDlpBinary = path.join(__dirname, "../extensions/yt-dlp.exe");
 } else {
     ytDlpBinary = path.join(__dirname, "../extensions/yt-dlp");
-    console.log("Binary path:", ytDlpBinary);
-    console.log("Binary exists:", fs.existsSync(ytDlpBinary));
-    console.log("__dirname is:", __dirname);
+
+    if (!fs.existsSync(ytDlpBinary)) {
+        console.log("Downloading yt-dlp binary...");
+        fs.mkdirSync(path.dirname(ytDlpBinary), { recursive: true });
+        await execAsync(
+            `curl -L https://github.com/yt-dlp/yt-dlp/releases/latest/download/yt-dlp -o ${ytDlpBinary} && chmod +x ${ytDlpBinary}`
+        );
+        console.log("yt-dlp downloaded successfully");
+    }
 }
 
 const ytDlpWrap = new YTDlpWrap(ytDlpBinary);
