@@ -26,11 +26,12 @@ const downloadController = async (req, res) => {
 
   const args = [
     url,
+    "--js-runtimes", "nodejs",
     "-f",
     "bestvideo+bestaudio/best",
     "-o",
     outputPath
-  ];
+];
 
   // Add cookies if available
   if (fs.existsSync(cookiesPath)) {
