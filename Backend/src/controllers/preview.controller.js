@@ -21,8 +21,8 @@ const previewController = async (req, res) => {
 
         // Add cookies if available
        const extraArgs = fs.existsSync(cookiesPath)
-    ? ["--cookies", cookiesPath, "--js-runtimes", "nodejs"]
-    : ["--js-runtimes", "nodejs"];
+    ? ["--cookies", cookiesPath, "--js-runtimes", "node"]
+    : ["--js-runtimes", "node"];
 
         const info = await ytDlpWrap.getVideoInfo([url, ...extraArgs]);
 

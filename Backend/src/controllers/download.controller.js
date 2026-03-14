@@ -26,7 +26,7 @@ const downloadController = async (req, res) => {
 
   const args = [
     url,
-    "--js-runtimes", "nodejs",
+    "--js-runtimes", "node",
     "-f",
     "bestvideo+bestaudio/best",
     "-o",
