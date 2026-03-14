@@ -1,8 +1,12 @@
 import express from 'express';
 import downloadRoute from './routes/downloadRoute.js';
 import cors from 'cors';
-const wildCardRoute = require('./routes/wildCardRoute.js/index.js');
-const path = require('path');
+import wildCardRoute from './routes/wildCardRoute.js';
+import path from 'path';
+import { fileURLToPath } from "url";
+
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
 
 const app = express();
 
