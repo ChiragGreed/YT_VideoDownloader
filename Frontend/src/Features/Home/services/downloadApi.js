@@ -6,11 +6,6 @@ const api = axios.create({
 })
 
 export const downloadVideoApi = async (url) => {
-    const response = await api.post('/download', { url: url }, { responseType: 'blob' });
-    return response;
-}
-
-export const VideoDetsApi = async (url) => {
     const response = await api.post('/getVideoDets', { url: url });
     return response;
 }

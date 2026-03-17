@@ -5,9 +5,9 @@ const extractVideoId = (url) => {
   return match ? match[1] : url;
 };
 
-const downloadController = async (req, res) => {
+const previewController = async (req, res) => {
   const { url } = req.body;
-  if (!url) return res.status(400).json({ message: "Url not found" });
+  if (!url) return res.status(400).json({ message: "Url required" });
 
   try {
     const response = await axios.get('https://ytstream-download-youtube-videos.p.rapidapi.com/dl', {
@@ -20,32 +20,24 @@ const downloadController = async (req, res) => {
 
     const data = response.data;
 
+    const thumbnail = data.thumbnail[data.thumbnail.length - 1].url;
+
     const bestFormat = data.formats
       .filter(f => f.mimeType?.includes('video/mp4'))
       .sort((a, b) => (b.width || 0) - (a.width || 0))[0];
 
-    if (!bestFormat) {
-      return res.status(404).json({ message: "No suitable format found" });
-    }
-
-    // Stream the video through your server so browser downloads it
-    const videoResponse = await axios.get(bestFormat.url, {
-      responseType: 'stream',
-      headers: {
-        'User-Agent': 'Mozilla/5.0',
-        'Referer': 'https://www.youtube.com'
-      }
+    res.json({
+      title: data.title,
+      thumbnail: thumbnail,
+      duration: parseInt(data.lengthSeconds),
+      uploader: data.channelTitle,
+      downloadUrl: bestFormat?.url || null  // download URL included
     });
 
-    res.setHeader('Content-Disposition', 'attachment; filename="video.mp4"');
-    res.setHeader('Content-Type', 'video/mp4');
-
-    videoResponse.data.pipe(res);
-
   } catch (err) {
-    console.error("Download error:", err.response?.data || err.message);
-    res.status(500).json({ message: "Download failed" });
+    console.error("Preview error:", err.response?.data || err.message);
+    res.status(500).json({ message: "Preview failed" });
   }
 };
 
-export default downloadController;
+export default previewController;
