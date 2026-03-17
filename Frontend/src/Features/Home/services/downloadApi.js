@@ -1,7 +1,7 @@
 import axios from 'axios'
 
 const api = axios.create({
-    baseURL: 'https://yt-videodownloader-chfj.onrender.com',
+    baseURL: 'https://yt-videodownloader-chfj.onrender.com/api',
     withCredentials: true
 })
 
