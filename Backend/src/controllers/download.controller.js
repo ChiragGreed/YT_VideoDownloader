@@ -1,61 +1,51 @@
-import path from "path";
-import fs from "fs";
-import { ytDlpWrap } from "../services/yt_dlp_setup.js";
-import { fileURLToPath } from "url";
-import os from "os";
+import axios from 'axios';
 
-const __filename = fileURLToPath(import.meta.url);
-const __dirname = path.dirname(__filename);
-
-// Write cookies to a temp file once
-const cookiesPath = path.join(os.tmpdir(), "yt-cookies.txt");
-if (process.env.YOUTUBE_COOKIES && !fs.existsSync(cookiesPath)) {
-  fs.writeFileSync(cookiesPath, process.env.YOUTUBE_COOKIES, "utf8");
-}
+const extractVideoId = (url) => {
+  const match = url.match(/(?:youtube\.com\/watch\?v=|youtu\.be\/)([^&\s?]+)/);
+  return match ? match[1] : url;
+};
 
 const downloadController = async (req, res) => {
-
   const { url } = req.body;
+  if (!url) return res.status(400).json({ message: "Url not found" });
 
-  if (!url) {
-    return res.status(400).json({ message: "Url not found" });
-  }
-
-  console.log("Download requested for:", url);
-
-  const tempFileName = `download-${Date.now()}.mp4`;
-  const outputPath = path.join(__dirname, tempFileName);
-
-  const args = [
-    url,
-    "--js-runtimes", "node",
-    "-f",
-    "bestvideo+bestaudio/best",
-    "-o",
-    outputPath
-  ];
-
-  if (fs.existsSync(cookiesPath)) {
-    args.push("--cookies", cookiesPath);
-    console.log("Using cookies from:", cookiesPath);
-  }
-
-  console.log("Starting download with args:", args);
-
-  ytDlpWrap.exec(args)
-    .on("close", () => {
-      console.log("Download complete, sending file:", outputPath);
-      res.download(outputPath, "video.mp4", () => {
-        fs.unlink(outputPath, () => { });
-      });
-    })
-    .on("error", (err) => {
-      console.error("Download error:", err);
-      if (!res.headersSent) {
-        res.status(500).json({ message: "Download failed", error: err.message });
+  try {
+    const response = await axios.get('https://ytstream-download-youtube-videos.p.rapidapi.com/dl', {
+      params: { id: extractVideoId(url) },
+      headers: {
+        'x-rapidapi-key': process.env.RAPIDAPI_KEY,
+        'x-rapidapi-host': 'ytstream-download-youtube-videos.p.rapidapi.com'
       }
     });
 
+    const data = response.data;
+
+    const bestFormat = data.formats
+      .filter(f => f.mimeType?.includes('video/mp4'))
+      .sort((a, b) => (b.width || 0) - (a.width || 0))[0];
+
+    if (!bestFormat) {
+      return res.status(404).json({ message: "No suitable format found" });
+    }
+
+    // Stream the video through your server so browser downloads it
+    const videoResponse = await axios.get(bestFormat.url, {
+      responseType: 'stream',
+      headers: {
+        'User-Agent': 'Mozilla/5.0',
+        'Referer': 'https://www.youtube.com'
+      }
+    });
+
+    res.setHeader('Content-Disposition', 'attachment; filename="video.mp4"');
+    res.setHeader('Content-Type', 'video/mp4');
+
+    videoResponse.data.pipe(res);
+
+  } catch (err) {
+    console.error("Download error:", err.response?.data || err.message);
+    res.status(500).json({ message: "Download failed" });
+  }
 };
 
 export default downloadController;

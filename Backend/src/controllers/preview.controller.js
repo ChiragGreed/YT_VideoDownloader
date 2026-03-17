@@ -1,58 +1,39 @@
-import path from "path";
-import fs from "fs";
-import { ytDlpWrap } from "../services/yt_dlp_setup.js";
-import os from "os";
+import axios from 'axios';
 
-// Write cookies to a temp file once
-const cookiesPath = path.join(os.tmpdir(), "yt-cookies.txt");
-if (process.env.YOUTUBE_COOKIES && !fs.existsSync(cookiesPath)) {
-    fs.writeFileSync(cookiesPath, process.env.YOUTUBE_COOKIES, "utf8");
-}
+const extractVideoId = (url) => {
+    const match = url.match(/(?:youtube\.com\/watch\?v=|youtu\.be\/)([^&\s?]+)/);
+    return match ? match[1] : url;
+};
 
 const previewController = async (req, res) => {
-
     const { url } = req.body;
-
-    if (!url) {
-        return res.status(400).json({ message: "Url required" });
-    }
+    if (!url) return res.status(400).json({ message: "Url required" });
 
     try {
-        console.log("Preview requested for:", url);
+        const response = await axios.get('https://ytstream-download-youtube-videos.p.rapidapi.com/dl', {
+            params: { id: extractVideoId(url) },
+            headers: {
+                'x-rapidapi-key': process.env.RAPIDAPI_KEY,
+                'x-rapidapi-host': 'ytstream-download-youtube-videos.p.rapidapi.com'
+            }
+        });
 
-        const extraArgs = fs.existsSync(cookiesPath)
-            ? ["--cookies", cookiesPath, "--js-runtimes", "node"]
-            : ["--js-runtimes", "node"];
+        const data = response.data;
 
-        console.log("Calling getVideoInfo with args:", extraArgs);
-
-        const info = await ytDlpWrap.getVideoInfo([url, ...extraArgs]);
-
-        console.log("Got video info:", info.title);
-
-        const formats = info.formats
-            .filter(f => f.ext === "mp4" && f.vcodec !== "none")
-            .map(f => ({
-                format_id: f.format_id,
-                quality: f.format_note,
-                resolution: f.resolution
-            }));
-
-        console.log("Formats found:", formats.length);
+        // get highest quality thumbnail
+        const thumbnail = data.thumbnail[data.thumbnail.length - 1].url;
 
         res.json({
-            title: info.title,
-            thumbnail: info.thumbnail,
-            duration: info.duration,
-            uploader: info.uploader,
-            formats
+            title: data.title,
+            thumbnail: thumbnail,
+            duration: parseInt(data.lengthSeconds),
+            uploader: data.channelTitle,
         });
 
     } catch (err) {
-        console.error("Preview error:", err);
-        res.status(500).json({ message: "Preview failed", error: err.message });
+        console.error("Preview error:", err.response?.data || err.message);
+        res.status(500).json({ message: "Preview failed" });
     }
-
 };
 
 export default previewController;
