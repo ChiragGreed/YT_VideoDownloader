@@ -9,18 +9,14 @@ const useDownload = () => {
 
     const downloadHandler = async (url) => {
         setLoading(true);
-        setError(null); // clear previous error
+        setError(null);
         try {
             const response = await downloadVideoApi(url);
-            if (response.data.message) {
-                // backend returned an error message
-                setError(response.data.message);
-            } else {
-                setVideo(response.data);
-                setDownloadUrl(response.data.downloadUrl);
-            }
+            setVideo(response.data);
+            setDownloadUrl(response.data.downloadUrl);
         } catch (err) {
-            setError("Something went wrong. Please try again.");
+            const message = err.response?.data?.message || "Something went wrong. Please try again.";
+            setError(message);
             console.error("Download error:", err);
         } finally {
             setLoading(false);
