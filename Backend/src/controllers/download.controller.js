@@ -18,6 +18,8 @@ const previewController = async (req, res) => {
       }
     });
 
+    console.log("RapidAPI raw response:", JSON.stringify(response.data, null, 2));
+
     const data = response.data;
 
     const thumbnail = Array.isArray(data.thumbnail) && data.thumbnail.length > 0
