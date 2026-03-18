@@ -9,7 +9,7 @@ const formatDuration = (seconds) => {
 
 const DownloadCard = () => {
     const { context } = useDownload();
-    const { DownloadUrl, Loading, Video } = context;
+    const { DownloadUrl, Loading, Video, Error } = context;
 
     const handleDownload = () => {
         const a = document.createElement('a');
@@ -32,12 +32,23 @@ const DownloadCard = () => {
         );
     }
 
+    if (Error) {
+        return (
+            <div className="dc-error">
+                <svg viewBox="0 0 24 24" fill="none">
+                    <circle cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="1.5" />
+                    <path d="M12 8v4M12 16h.01" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" />
+                </svg>
+                <p>{Error}</p>
+            </div>
+        );
+    }
+
     if (!DownloadUrl) return null;
 
     return (
         <div className="dc-wrap">
             <div className="dc-card">
-                {/* Thumbnail */}
                 <div className="dc-thumb">
                     <img src={Video.thumbnail} alt={Video.title} />
                     <div className="dc-thumb__overlay">
@@ -51,7 +62,6 @@ const DownloadCard = () => {
                     </div>
                 </div>
 
-                {/* Info */}
                 <div className="dc-info">
                     <div className="dc-info__top">
                         <span className="dc-tag">YouTube</span>

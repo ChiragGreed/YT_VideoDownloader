@@ -22,6 +22,14 @@ const previewController = async (req, res) => {
 
     const data = response.data;
 
+    if (data.status === 'fail') {
+      return res.status(400).json({
+        message: data.error === 'Please sign in'
+          ? 'This video is age-restricted or region-locked and cannot be downloaded.'
+          : data.error
+      });
+    }
+
     const thumbnail = Array.isArray(data.thumbnail) && data.thumbnail.length > 0
       ? data.thumbnail[data.thumbnail.length - 1].url
       : null;

@@ -10,14 +10,19 @@ const DownloadContextProvider = ({ children }) => {
     const [VideoBlob, setVideoBlob] = useState(null);
     const [DownloadUrl, setDownloadUrl] = useState(null);
     const [Video, setVideo] = useState(null);
-
-
+    const [Error, setError] = useState(null);
 
     return (
-        <downloadContext.Provider value={{ Loading, setLoading, VideoBlob, setVideoBlob, DownloadUrl, setDownloadUrl, Video, setVideo }}>
+        <downloadContext.Provider value={{ 
+            Loading, setLoading, 
+            VideoBlob, setVideoBlob, 
+            DownloadUrl, setDownloadUrl, 
+            Video, setVideo,
+            Error, setError
+        }}>
             {children}
         </downloadContext.Provider>
     )
 }
 
-export default DownloadContextProvider
+export default DownloadContextProvider;
