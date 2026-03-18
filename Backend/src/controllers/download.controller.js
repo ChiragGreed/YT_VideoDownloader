@@ -20,11 +20,15 @@ const previewController = async (req, res) => {
 
     const data = response.data;
 
-    const thumbnail = data.thumbnail[data.thumbnail.length - 1].url;
+    const thumbnail = Array.isArray(data.thumbnail) && data.thumbnail.length > 0
+      ? data.thumbnail[data.thumbnail.length - 1].url
+      : null;
 
-    const bestFormat = data.formats
-      .filter(f => f.mimeType?.includes('video/mp4'))
-      .sort((a, b) => (b.width || 0) - (a.width || 0))[0];
+    const bestFormat = Array.isArray(data.formats) && data.formats.length > 0
+      ? data.formats
+        .filter(f => f.mimeType?.includes('video/mp4'))
+        .sort((a, b) => (b.width || 0) - (a.width || 0))[0]
+      : null;
 
     res.json({
       title: data.title,
